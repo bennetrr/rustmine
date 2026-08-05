@@ -120,6 +120,5 @@ jobs:
 # TODO:
 # - nexttest + coverage
 # - tokei
-# - cargo audit (replace with dependabot)
 # - cargo outdated (replace with dependabot?)
 # - cargo sbom --output-format cyclone_dx_json_1_4 + sunshinedx (GitHub native?)
