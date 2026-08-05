@@ -20,7 +20,7 @@ jobs:
       contents: read
 
     strategy:
-      fail-fast: true
+      fail-fast: ${{ inputs.upload }}
       matrix:
         include:
           - rust_target: x86_64-unknown-linux-gnu
@@ -127,6 +127,7 @@ jobs:
         uses: pnpm/setup@v1.0.0
         with:
           package-json-file: docs/package.json
+          runtime: node@26
           cache: true
 
       - name: Build documentation

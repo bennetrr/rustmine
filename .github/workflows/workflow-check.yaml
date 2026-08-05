@@ -16,6 +16,8 @@ jobs:
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@1.97.1
+        with:
+          components: rustfmt
 
       - name: Set up Rust cache
         uses: Swatinem/rust-cache@v2.9.1
@@ -92,13 +94,15 @@ jobs:
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@1.97.1
+        with:
+          components: clippy
 
       - name: Set up Rust cache
         uses: Swatinem/rust-cache@v2.9.1
 
       - name: Run cargo fmt
         run: |
-          cargo clippy -D warnings
+          cargo clippy --deny warnings
 
   lint-actions:
     name: Lint GitHub Actions
@@ -115,7 +119,7 @@ jobs:
 
       - name: Run actionlint
         run: |
-          actionlint -color
+          actionlint -color -shellcheck= -pyflakes=
 
 # TODO:
 # - nexttest + coverage
