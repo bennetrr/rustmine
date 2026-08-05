@@ -4,6 +4,7 @@ rust = "1.97.1"
 node = "26"
 pnpm = "11.20.0"
 "npm:prettier" = "latest"
+actionlint = "latest"
 
 [deps.pnpm]
 auto = true

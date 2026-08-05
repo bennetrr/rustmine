@@ -1,0 +1,125 @@
+name: Check code style
+
+on:
+  workflow_call:
+
+jobs:
+  format-rust:
+    name: Check Rust format
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v7
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@1.97.1
+
+      - name: Set up Rust cache
+        uses: Swatinem/rust-cache@v2.9.1
+
+      - name: Run cargo fmt
+        run: |
+          cargo fmt --check
+
+  format-js:
+    name: Check JavaScript format
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v7
+
+      - name: Set up mise
+        uses: jdx/mise-action@v4.2.4
+
+      - name: Run prettier
+        run: |
+          prettier --check .
+
+  format-mise:
+    name: Check Mise configuration format
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v7
+
+      - name: Set up mise
+        uses: jdx/mise-action@v4.2.4
+
+      - name: Run mise fmt
+        run: |
+          mise fmt --check
+
+  format-files:
+    name: Check general file format
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up mise
+        uses: jdx/mise-action@v4.2.4
+
+      - name: Run checks
+        run: |
+          hk check --all --step bom
+          hk check --all --step merge-conflicts
+          hk check --all --step newlines
+          hk check --all --step line-endings
+
+  lint-rust:
+    name: Lint Rust
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v7
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@1.97.1
+
+      - name: Set up Rust cache
+        uses: Swatinem/rust-cache@v2.9.1
+
+      - name: Run cargo fmt
+        run: |
+          cargo clippy -D warnings
+
+  lint-actions:
+    name: Lint GitHub Actions
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v7
+
+      - name: Set up mise
+        uses: jdx/mise-action@v4.2.4
+
+      - name: Run actionlint
+        run: |
+          actionlint -color
+
+# TODO:
+# - nexttest + coverage
+# - tokei
+# - cargo audit (replace with dependabot)
+# - cargo outdated (replace with dependabot?)
+# - cargo sbom --output-format cyclone_dx_json_1_4 + sunshinedx (GitHub native?)

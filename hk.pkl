@@ -4,10 +4,12 @@ import "package://github.com/jdx/hk/releases/download/v1.54.0/hk@1.54.0#/Builtin
 local linters = new Mapping<String, Step> {
     ["rustfmt"] = Builtins.rustfmt
     ["prettier"] = Builtins.prettier
+    ["actionlint"] = Builtins.actionlint
     ["mise"] = Builtins.mise
     ["bom"] = Builtins.byte_order_marker
-    ["merge-conflict"] = Builtins.check_merge_conflict
+    ["merge-conflicts"] = Builtins.check_merge_conflict
     ["newlines"] = Builtins.newlines
+    ["line-endings"] = Builtins.mixed_line_ending
 }
 
 hooks {
@@ -19,7 +21,7 @@ hooks {
     ["commit-msg"] {
         steps {
             ["commits"] = (Builtins.check_conventional_commit) {
-                check = "hk util check-conventional-commit --allowed-types feat,fix,test,docs,chore {{commit_msg_file}}"
+                check = "hk util check-conventional-commit --allowed-types feat,fix,test,docs,chore,ci {{commit_msg_file}}"
             }
         }
     }

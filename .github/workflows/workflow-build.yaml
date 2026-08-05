@@ -1,0 +1,141 @@
+name: Build release artifacts
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        default: v0.0.0
+        description: The release version, in the format of v0.0.0
+      upload:
+        type: boolean
+        default: false
+        description: Whether to upload build artifacts
+
+jobs:
+  rustmine:
+    name: Build RustMine
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - rust_target: x86_64-unknown-linux-gnu
+            binary_name: rustmine-${{ inputs.version }}-linux-amd64
+          - rust_target: x86_64-pc-windows-gnu
+            binary_name: rustmine-${{ inputs.version }}-windows-amd64.exe
+          - rust_target: aarch64-apple-darwin
+            binary_name: rustmine-${{ inputs.version }}-macos-arm64
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v7
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@1.97.1
+        with:
+          target: ${{ matrix.rust_target }}
+
+      - name: Set up Rust cache
+        uses: Swatinem/rust-cache@v2.9.1
+
+      - name: Install Windows dependencies
+        if: matrix.rust_target == 'x86_64-pc-windows-gnu'
+        run: |
+          sudo apt install -y gcc-mingw-w64-x86–64
+
+      - name: Build release binary
+        run: |
+          cargo build --release --target ${{ matrix.rust_target }}
+
+      - name: Move release binary
+        if: inputs.upload
+        run: |
+          if [[ "${{ matrix.binary_name }}" == *.exe ]]; then
+            mv target/${{ matrix.rust_target }}/release/rustmine.exe ${{ matrix.binary_name }}
+          else
+            mv target/${{ matrix.rust_target }}/release/rustmine ${{ matrix.binary_name }}
+          fi
+
+      - name: Upload release artifacts
+        if: inputs.upload
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-binary-${{ matrix.binary_name }}
+          path: ${{ matrix.binary_name }}
+          if-no-files-found: error
+
+  rustmine-authentication-service:
+    name: Build RustMine Authentication Service
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to GHCR
+        if: inputs.upload
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Build image metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ghcr.io/bennetrr/rustmine-authentication-service
+          flavor: |
+            latest=true
+          tags: |
+            type=sha,prefix=
+            type=semver,pattern={{version}},value=${{ inputs.version }}
+
+      - name: Build docker images
+        uses: docker/build-push-action@v7
+        with:
+          file: rustmine-authentication-service/docker/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          push: ${{ inputs.upload }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  docs:
+    name: Build documentation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v7
+
+      - name: Set up node
+        uses: pnpm/setup@v1.0.0
+        with:
+          package-json-file: docs/package.json
+          cache: true
+
+      - name: Build documentation
+        run: |
+          pnpm build
+        working-directory: docs
+
+# TODO:
+# - cargo doc --no-deps
+# - cargo modules dependencies --package $TARGET --bin $TARGET --no-uses --no-externs --verbose > dependencies.dot
+# - cargo modules structure --package $TARGET --bin $TARGET --verbose --cfg-test | sed -r 's/\x1B\[(;?[0-9]{1,3})+[mGK]//g' > structure.txt
+# -> Include in published documentation?

@@ -25,7 +25,7 @@ services:
     <<: *api-base
     build:
       context: ../..
-      dockerfile: ../docker/Dockerfile
+      dockerfile: rustmine-authentication-service/docker/Dockerfile
     profiles:
       - api-local
 
