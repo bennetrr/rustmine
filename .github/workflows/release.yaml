@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      version: ${{ steps.get-release-version.outputs.version-name }}
+      version-number: ${{ steps.get-release-version.outputs.version }}
 
     steps:
       - name: Checkout branch
@@ -33,3 +36,37 @@ jobs:
         if: steps.get-release-version.outputs.tag-created != 'true'
         run: |
           exit 1
+
+  build:
+    name: Build release artifacts
+    uses: ./.github/workflows/workflow-build.yaml
+    needs:
+      - get-version
+    with:
+      version: ${{ needs.get-version.outputs.version }}
+      publish: true
+
+  release:
+    name: Create GitHub release
+    runs-on: ubuntu-latest
+    needs:
+      - get-version
+      - build
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download release artifacts
+        uses: actions/download-artifact@v8
+        with:
+          pattern: release-binary*
+          merge-multiple: true
+          path: release-binaries
+
+      - name: Create GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          name: RustMine ${{ needs.get-version.outputs.version-number }}
+          tag: ${{ needs.get-version.outputs.version }}
+          generateReleaseNotes: true
+          artifacts: release-binaries/*
