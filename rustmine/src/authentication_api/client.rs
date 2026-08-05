@@ -1,3 +1,4 @@
+#![allow(unused)]
 use reqwest::StatusCode;
 use reqwest::blocking::{Client, Response};
 use serde::Serialize;
