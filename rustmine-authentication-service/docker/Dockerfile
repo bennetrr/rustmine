@@ -1,4 +1,4 @@
-FROM rust:1.94.0-slim-trixie AS builder
+FROM rust:1.97.1-slim-trixie AS builder
 WORKDIR /app
 COPY . .
 RUN --mount=type=cache,target=/app/target/ \

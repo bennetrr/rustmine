@@ -1,0 +1,33 @@
+amends "package://github.com/jdx/hk/releases/download/v1.54.0/hk@1.54.0#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.54.0/hk@1.54.0#/Builtins.pkl"
+
+local linters = new Mapping<String, Step> {
+    ["rustfmt"] = Builtins.rustfmt
+    ["prettier"] = Builtins.prettier
+    ["mise"] = Builtins.mise
+    ["bom"] = Builtins.byte_order_marker
+    ["merge-conflict"] = Builtins.check_merge_conflict
+    ["newlines"] = Builtins.newlines
+}
+
+hooks {
+    ["pre-commit"] {
+        fix = true
+        stash = "git"
+        steps = linters
+    }
+    ["commit-msg"] {
+        steps {
+            ["commits"] = (Builtins.check_conventional_commit) {
+                check = "hk util check-conventional-commit --allowed-types feat,fix,test,docs,chore {{commit_msg_file}}"
+            }
+        }
+    }
+    ["fix"] {
+        fix = true
+        steps = linters
+    }
+    ["check"] {
+        steps = linters
+    }
+}

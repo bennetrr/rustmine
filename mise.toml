@@ -1,0 +1,15 @@
+[tools]
+hk = { version = "latest", postinstall = "hk install --mise --legacy" }
+rust = "1.97.1"
+node = "26"
+pnpm = "11.20.0"
+"npm:prettier" = "latest"
+
+[deps.pnpm]
+auto = true
+
+[tasks]
+format = ['cargo fmt', 'prettier -w .']
+
+[env]
+HK_MISE = 1
