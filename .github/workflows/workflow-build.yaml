@@ -7,7 +7,7 @@ on:
         type: string
         default: v0.0.0
         description: The release version, in the format of v0.0.0
-      upload:
+      publish:
         type: boolean
         default: false
         description: Whether to upload build artifacts
@@ -15,20 +15,23 @@ on:
 jobs:
   rustmine:
     name: Build RustMine
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     permissions:
       contents: read
 
     strategy:
-      fail-fast: true
+      fail-fast: ${{ inputs.publish }}
       matrix:
         include:
           - rust_target: x86_64-unknown-linux-gnu
             binary_name: rustmine-${{ inputs.version }}-linux-amd64
-          - rust_target: x86_64-pc-windows-gnu
+            os: ubuntu-latest
+          - rust_target: x86_64-pc-windows-msvc
             binary_name: rustmine-${{ inputs.version }}-windows-amd64.exe
+            os: windows-latest
           - rust_target: aarch64-apple-darwin
             binary_name: rustmine-${{ inputs.version }}-macos-arm64
+            os: macos-latest
 
     steps:
       - name: Checkout branch
@@ -42,17 +45,13 @@ jobs:
       - name: Set up Rust cache
         uses: Swatinem/rust-cache@v2.9.1
 
-      - name: Install Windows dependencies
-        if: matrix.rust_target == 'x86_64-pc-windows-gnu'
-        run: |
-          sudo apt install -y gcc-mingw-w64-x86–64
-
       - name: Build release binary
         run: |
           cargo build --release --target ${{ matrix.rust_target }}
 
       - name: Move release binary
-        if: inputs.upload
+        if: inputs.publish
+        shell: bash
         run: |
           if [[ "${{ matrix.binary_name }}" == *.exe ]]; then
             mv target/${{ matrix.rust_target }}/release/rustmine.exe ${{ matrix.binary_name }}
@@ -61,7 +60,7 @@ jobs:
           fi
 
       - name: Upload release artifacts
-        if: inputs.upload
+        if: inputs.publish
         uses: actions/upload-artifact@v7
         with:
           name: release-binary-${{ matrix.binary_name }}
@@ -73,22 +72,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
 
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
-
       - name: Set up Docker
         uses: docker/setup-buildx-action@v4
-
-      - name: Log in to GHCR
-        if: inputs.upload
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
 
       - name: Build image metadata
         id: meta
@@ -101,23 +88,29 @@ jobs:
             type=sha,prefix=
             type=semver,pattern={{version}},value=${{ inputs.version }}
 
-      - name: Build docker images
+      - name: Build docker image
         uses: docker/build-push-action@v7
         with:
           file: rustmine-authentication-service/docker/Dockerfile
-          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          push: ${{ inputs.upload }}
+          outputs: type=docker,dest=${{ runner.temp }}/authentication-service.tar
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Upload docker image artifact
+        if: inputs.publish
+        uses: actions/upload-artifact@v7
+        with:
+          name: authentication-service-image
+          path: ${{ runner.temp }}/authentication-service.tar
+          if-no-files-found: error
 
   docs:
     name: Build documentation
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pages: write
 
     steps:
       - name: Checkout branch
@@ -127,12 +120,26 @@ jobs:
         uses: pnpm/setup@v1.0.0
         with:
           package-json-file: docs/package.json
+          runtime: node@26
           cache: true
+          cache-dependency-path: docs/pnpm-lock.yaml
+          install: false
+
+      - name: Install dependencies
+        run: |
+          pnpm install --frozen-lockfile
+        working-directory: docs
 
       - name: Build documentation
         run: |
           pnpm build
         working-directory: docs
+
+      - name: Upload Pages artifact
+        if: inputs.publish
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: docs/dist
 
 # TODO:
 # - cargo doc --no-deps

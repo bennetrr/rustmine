@@ -5,17 +5,19 @@ on:
     branches:
       - main
 
+concurrency:
+  group: pr-check-${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: Test-build release artifacts
     uses: ./.github/workflows/workflow-build.yaml
     permissions:
       contents: read
-    secrets: inherit
 
   check:
     name: Check code style
     uses: ./.github/workflows/workflow-check.yaml
     permissions:
       contents: read
-    secrets: inherit

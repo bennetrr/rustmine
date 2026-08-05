@@ -102,7 +102,7 @@ impl TState for SingleplayerState {
                                 };
 
                                 let button = egui::Frame::new()
-                                    .stroke(Stroke::new(2.0, border_color))
+                                    .stroke(Stroke::new(2.0_f32, border_color))
                                     .fill(fill_color)
                                     .inner_margin(egui::Margin::symmetric(10, 10))
                                     .outer_margin(egui::Margin::symmetric(10, 0))
@@ -163,7 +163,7 @@ impl TState for SingleplayerState {
                 egui::vec2(0.0, -20.0),
                 |ui| {
                     let mut visuals = ui.visuals().clone();
-                    visuals.widgets.inactive.bg_stroke = Stroke::new(2.0, border_dark);
+                    visuals.widgets.inactive.bg_stroke = Stroke::new(2.0_f32, border_dark);
                     ui.set_visuals(visuals);
 
                     ui.scope(|ui| {

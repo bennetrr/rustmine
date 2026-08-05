@@ -1,6 +1,6 @@
 [tools]
 hk = { version = "latest", postinstall = "hk install --mise --legacy" }
-rust = "1.97.1"
+rust = { version = "1.97.1", components = ["rustfmt", "clippy"] }
 node = "26"
 pnpm = "11.20.0"
 "npm:prettier" = "latest"
