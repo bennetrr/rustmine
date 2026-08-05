@@ -1,0 +1,30 @@
+type: http_request
+model: http_request
+id: rq_sox9esCtsS
+createdAt: 2026-05-23T18:38:14.611772
+updatedAt: 2026-06-15T15:54:54.332488
+workspaceId: wk_ghHV7rR7X5
+folderId: fl_TNGJEPgCFN
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "name": "bennetrr"
+    }
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: Get one
+sortPriority: 1000.0
+url: ${[ HOST ]}/players/:id
+urlParameters:
+- enabled: true
+  name: :id
+  value: ''
+  id: axKzVMG8zn
+- enabled: true
+  name: ''
+  value: ''
+  id: Remt0pBsRA

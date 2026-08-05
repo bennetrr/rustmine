@@ -1,0 +1,27 @@
+type: http_request
+model: http_request
+id: rq_WagRCPrptA
+createdAt: 2026-05-23T16:24:35.542278
+updatedAt: 2026-06-15T15:50:56.770651
+workspaceId: wk_ghHV7rR7X5
+folderId: fl_TNGJEPgCFN
+authentication: {}
+authenticationType: none
+body:
+  text: |-
+    {
+      "name": "firstplayer",
+      "password": "123456789ABC"
+    }
+bodyType: application/json
+description: ''
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: bjS3G5iSXd
+method: POST
+name: Authenticate
+sortPriority: 333.3333333333333
+url: ${[ HOST ]}/players/me/auth
+urlParameters: []

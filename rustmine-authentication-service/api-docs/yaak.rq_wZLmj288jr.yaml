@@ -1,0 +1,27 @@
+type: http_request
+model: http_request
+id: rq_wZLmj288jr
+createdAt: 2026-05-23T16:52:18.825221
+updatedAt: 2026-06-15T15:45:32.687421
+workspaceId: wk_ghHV7rR7X5
+folderId: fl_TNGJEPgCFN
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "old_password": "123456789ABC",
+      "new_password": "123456789abc"
+    }
+bodyType: application/json
+description: ''
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: bjS3G5iSXd
+method: PATCH
+name: Change password
+sortPriority: 4000.0
+url: ${[ HOST ]}/players/me/password
+urlParameters: []

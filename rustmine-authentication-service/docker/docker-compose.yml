@@ -1,0 +1,45 @@
+name: rustmine-authentication-service
+
+x-common:
+  db-environment: &db-environment
+    MARIADB_USER: ${MARIADB_USER}
+    MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+    MARIADB_DATABASE: ${MARIADB_DATABASE}
+  api-base: &api-base
+    ports:
+      - '65432:65432'
+    environment:
+      <<: *db-environment
+      MARIADB_HOST: db:3306
+      JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
+
+services:
+  api:
+    <<: *api-base
+    image: ghcr.io/bennetrr/rustmine-authentication-service:latest
+    profiles:
+      - api
+
+  api-local:
+    <<: *api-base
+    build:
+      context: ../..
+      dockerfile: ../docker/Dockerfile
+    profiles:
+      - api-local
+
+  db:
+    image: mariadb:12.2.2
+    environment:
+      <<: *db-environment
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    volumes:
+      - db:/var/lib/mysql
+    profiles:
+      - api
+      - api-local
+      - db
+
+volumes:
+  db:

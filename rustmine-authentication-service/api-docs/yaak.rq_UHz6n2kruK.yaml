@@ -1,0 +1,22 @@
+type: http_request
+model: http_request
+id: rq_UHz6n2kruK
+createdAt: 2026-05-23T18:38:12.610286
+updatedAt: 2026-06-15T15:14:06.101725
+workspaceId: wk_ghHV7rR7X5
+folderId: fl_TNGJEPgCFN
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "name": "bennetrr"
+    }
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: Get me
+sortPriority: 2000.0
+url: ${[ HOST ]}/players/me
+urlParameters: []

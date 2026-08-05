@@ -1,0 +1,15 @@
+type: workspace
+model: workspace
+id: wk_ghHV7rR7X5
+createdAt: 2026-05-23T16:24:20.374694
+updatedAt: 2026-05-23T18:45:23.897464
+authentication:
+  token: ${[ JWT ]}
+authenticationType: bearer
+description: ''
+headers: [ ]
+name: RustMine Authentication Service
+encryptionKeyChallenge: null
+settingValidateCertificates: true
+settingFollowRedirects: true
+settingRequestTimeout: 0

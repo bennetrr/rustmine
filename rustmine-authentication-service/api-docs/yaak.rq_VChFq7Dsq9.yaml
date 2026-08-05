@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_VChFq7Dsq9
+createdAt: 2026-05-23T16:25:42.872469
+updatedAt: 2026-06-15T15:14:46.298195
+workspaceId: wk_ghHV7rR7X5
+folderId: null
+authentication: {}
+authenticationType: none
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: healthz
+sortPriority: 0.0
+url: ${[ HOST ]}/healthz
+urlParameters: []

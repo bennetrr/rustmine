@@ -1,0 +1,13 @@
+type: folder
+model: folder
+id: fl_TNGJEPgCFN
+createdAt: 2026-06-15T15:13:37.149794
+updatedAt: 2026-06-15T15:14:46.301696
+workspaceId: wk_ghHV7rR7X5
+folderId: null
+authentication: {}
+authenticationType: null
+description: ''
+headers: []
+name: Player
+sortPriority: 1000.0

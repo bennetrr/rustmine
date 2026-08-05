@@ -1,0 +1,26 @@
+type: http_request
+model: http_request
+id: rq_LC457F7gtw
+createdAt: 2026-05-23T16:52:05.025287
+updatedAt: 2026-06-15T15:45:01.448377
+workspaceId: wk_ghHV7rR7X5
+folderId: fl_TNGJEPgCFN
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "name": "FirstPlayer"
+    }
+bodyType: application/json
+description: ''
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: bjS3G5iSXd
+method: PATCH
+name: Change name
+sortPriority: 3000.0
+url: ${[ HOST ]}/players/me/name
+urlParameters: []
