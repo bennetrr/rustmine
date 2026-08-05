@@ -26,6 +26,7 @@ Read the full project documentation [here](https://rustmine.bennet.ranft.ing/).
    - In _Settings_ > _Tools_ > _Actions on Save_, check _Reformat Code_
    - In _Settings_ > _Rust_ > _External Linters_, check _Run external linter on the fly_
      and select _Clippy_ from the _External tool_ dropdown
+   - Optional: Install the [_WGSL Support_](https://plugins.jetbrains.com/plugin/18110-wgsl-support) plugin
 
 ### Conventional Commits
 
