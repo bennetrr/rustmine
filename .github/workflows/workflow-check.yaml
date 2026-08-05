@@ -102,7 +102,7 @@ jobs:
 
       - name: Run cargo fmt
         run: |
-          cargo clippy --deny warnings
+          cargo clippy -- --deny warnings
 
   lint-actions:
     name: Lint GitHub Actions

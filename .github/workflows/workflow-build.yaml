@@ -15,7 +15,7 @@ on:
 jobs:
   rustmine:
     name: Build RustMine
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     permissions:
       contents: read
 
@@ -25,10 +25,13 @@ jobs:
         include:
           - rust_target: x86_64-unknown-linux-gnu
             binary_name: rustmine-${{ inputs.version }}-linux-amd64
-          - rust_target: x86_64-pc-windows-gnu
+            os: ubuntu-latest
+          - rust_target: x86_64-pc-windows-msvc
             binary_name: rustmine-${{ inputs.version }}-windows-amd64.exe
+            os: windows-latest
           - rust_target: aarch64-apple-darwin
             binary_name: rustmine-${{ inputs.version }}-macos-arm64
+            os: macos-latest
 
     steps:
       - name: Checkout branch
@@ -42,17 +45,13 @@ jobs:
       - name: Set up Rust cache
         uses: Swatinem/rust-cache@v2.9.1
 
-      - name: Install Windows dependencies
-        if: matrix.rust_target == 'x86_64-pc-windows-gnu'
-        run: |
-          sudo apt install -y gcc-mingw-w64-x86–64
-
       - name: Build release binary
         run: |
           cargo build --release --target ${{ matrix.rust_target }}
 
       - name: Move release binary
         if: inputs.upload
+        shell: bash
         run: |
           if [[ "${{ matrix.binary_name }}" == *.exe ]]; then
             mv target/${{ matrix.rust_target }}/release/rustmine.exe ${{ matrix.binary_name }}
@@ -129,6 +128,13 @@ jobs:
           package-json-file: docs/package.json
           runtime: node@26
           cache: true
+          cache-dependency-path: docs/pnpm-lock.yaml
+          install: false
+
+      - name: Install dependencies
+        run: |
+          pnpm install --frozen-lockfile
+        working-directory: docs
 
       - name: Build documentation
         run: |
