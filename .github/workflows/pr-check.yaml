@@ -11,6 +11,8 @@ jobs:
     uses: ./.github/workflows/workflow-build.yaml
     permissions:
       contents: read
+      packages: write
+      pages: write
     secrets: inherit
 
   check:
