@@ -1,72 +1,43 @@
-name: Check PR
+name: Release
 
 on:
   push:
     branches:
       - release
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   get-version:
     name: Get next release version
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/workflow-get-version.yaml
     permissions:
-      contents: write
-    outputs:
-      version: ${{ steps.get-release-version.outputs.version-name }}
-      version-number: ${{ steps.get-release-version.outputs.version }}
-
-    steps:
-      - name: Checkout branch
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      - name: Set Git credentials
-        run: |
-          git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
-
-      - name: Get release version
-        uses: wemogy/get-release-version-action@v4.3.3
-        id: get-release-version
-        with:
-          git-username: github-actions[bot]
-          git-email: 41898282+github-actions[bot]@users.noreply.github.com
-
-      - name: Fail on missing changes
-        if: steps.get-release-version.outputs.tag-created != 'true'
-        run: |
-          exit 1
+      contents: read
 
   build:
     name: Build release artifacts
     uses: ./.github/workflows/workflow-build.yaml
     needs:
       - get-version
+    permissions:
+      contents: read
     with:
       version: ${{ needs.get-version.outputs.version }}
       publish: true
 
   release:
-    name: Create GitHub release
-    runs-on: ubuntu-latest
+    name: Publish release artifacts
+    uses: ./.github/workflows/workflow-release.yaml
     needs:
       - get-version
       - build
     permissions:
       contents: write
-
-    steps:
-      - name: Download release artifacts
-        uses: actions/download-artifact@v8
-        with:
-          pattern: release-binary*
-          merge-multiple: true
-          path: release-binaries
-
-      - name: Create GitHub release
-        uses: ncipollo/release-action@v1
-        with:
-          name: RustMine ${{ needs.get-version.outputs.version-number }}
-          tag: ${{ needs.get-version.outputs.version }}
-          generateReleaseNotes: true
-          artifacts: release-binaries/*
+      packages: write
+      pages: write
+      id-token: write
+    with:
+      version: ${{ needs.get-version.outputs.version }}
+      version-number: ${{ needs.get-version.outputs.version-number }}

@@ -100,7 +100,7 @@ jobs:
       - name: Set up Rust cache
         uses: Swatinem/rust-cache@v2.9.1
 
-      - name: Run cargo fmt
+      - name: Run cargo clippy
         run: |
           cargo clippy -- --deny warnings
 
