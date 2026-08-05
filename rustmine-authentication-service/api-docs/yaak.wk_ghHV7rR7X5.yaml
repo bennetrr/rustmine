@@ -7,7 +7,7 @@ authentication:
   token: ${[ JWT ]}
 authenticationType: bearer
 description: ''
-headers: [ ]
+headers: []
 name: RustMine Authentication Service
 encryptionKeyChallenge: null
 settingValidateCertificates: true

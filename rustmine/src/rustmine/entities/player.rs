@@ -1,7 +1,7 @@
-use crate::rustmine::generation::types::{BlockType, PlayerPos};
-use crate::rustmine::generation::world::World;
 use crate::engine::input::controller::{CameraController, ControllerAction};
 use crate::engine::rendering::camera::Camera;
+use crate::rustmine::generation::types::{BlockType, PlayerPos};
+use crate::rustmine::generation::world::World;
 use cgmath::Vector3;
 use winit::event::MouseButton;
 use winit::keyboard::KeyCode;

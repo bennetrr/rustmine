@@ -15,10 +15,10 @@ body:
 bodyType: application/json
 description: ''
 headers:
-- enabled: true
-  name: Content-Type
-  value: application/json
-  id: bjS3G5iSXd
+  - enabled: true
+    name: Content-Type
+    value: application/json
+    id: bjS3G5iSXd
 method: PATCH
 name: Change name
 sortPriority: 3000.0

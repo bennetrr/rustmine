@@ -1,8 +1,8 @@
+use crate::engine::rendering::instance::Instance;
 use crate::rustmine::generation::tree::{generate_tree, hash_pos};
 use crate::rustmine::generation::types::{BlockPos, ChunkPos, ChunkResult};
 use crate::rustmine::generation::types::{BlockType, ChunkStatus};
 use crate::rustmine::generation::world::GenerationData;
-use crate::engine::rendering::instance::Instance;
 use cgmath::{One, Vector2, Vector3};
 use crossbeam::channel::{Receiver, Sender, unbounded};
 use noise::{NoiseFn, SuperSimplex};

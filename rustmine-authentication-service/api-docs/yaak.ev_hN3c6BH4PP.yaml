@@ -10,9 +10,9 @@ base: true
 parentModel: workspace
 parentId: null
 variables:
-- enabled: true
-  name: HOST
-  value: http://localhost:65432
-  id: 08n0IDfs3g
+  - enabled: true
+    name: HOST
+    value: http://localhost:65432
+    id: 08n0IDfs3g
 color: null
 sortPriority: 0.0

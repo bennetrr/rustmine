@@ -9,7 +9,7 @@ pnpm = "11.20.0"
 auto = true
 
 [tasks]
-format = ['cargo fmt', 'prettier -w .']
+format = "hk fix --all"
 
 [env]
 HK_MISE = 1

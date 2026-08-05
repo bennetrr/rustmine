@@ -20,11 +20,11 @@ name: Get one
 sortPriority: 1000.0
 url: ${[ HOST ]}/players/:id
 urlParameters:
-- enabled: true
-  name: :id
-  value: ''
-  id: axKzVMG8zn
-- enabled: true
-  name: ''
-  value: ''
-  id: Remt0pBsRA
+  - enabled: true
+    name: :id
+    value: ''
+    id: axKzVMG8zn
+  - enabled: true
+    name: ''
+    value: ''
+    id: Remt0pBsRA

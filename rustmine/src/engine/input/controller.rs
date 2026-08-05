@@ -1,6 +1,6 @@
+use crate::engine::rendering::camera::Camera;
 use crate::rustmine::generation::types::{BlockPos, BlockType, PlayerPos};
 use crate::rustmine::generation::world::World;
-use crate::engine::rendering::camera::Camera;
 use cgmath::{InnerSpace, Vector3};
 use winit::event::MouseButton;
 use winit::keyboard::KeyCode;

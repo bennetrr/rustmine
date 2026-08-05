@@ -78,15 +78,15 @@ sidebar:
 
 - Player presses one of `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9` on the keyboard
 - System selects the block type corresponding to the pressed key
-    - `1` selects the block type “Grass”
-    - `2` selects the block type “Dirt”
-    - `3` selects the block type “Cobblestone”
-    - `4` selects the block type “Oak Log”
-    - `5` selects the block type “Spruce Log”
-    - `6` selects the block type “Birch Log”
-    - `7` selects the block type “Oak Leaves”
-    - `8` selects the block type “Spruce Leaves”
-    - `9` selects the block type “Birch Leaves”
+  - `1` selects the block type “Grass”
+  - `2` selects the block type “Dirt”
+  - `3` selects the block type “Cobblestone”
+  - `4` selects the block type “Oak Log”
+  - `5` selects the block type “Spruce Log”
+  - `6` selects the block type “Birch Log”
+  - `7` selects the block type “Oak Leaves”
+  - `8` selects the block type “Spruce Leaves”
+  - `9` selects the block type “Birch Leaves”
 
 **Post-conditions**:
 
@@ -109,9 +109,9 @@ sidebar:
 - Player presses the right mouse button
 - System places a block of the type selected by the player (→ UC3) or a default of “Grass” at the position the camera is
   pointing at
-    - **Exception Flow**: The camera does not point at an existing block or the block is more than 5 blocks from the
-      camera away
-        - Do nothing
+  - **Exception Flow**: The camera does not point at an existing block or the block is more than 5 blocks from the
+    camera away
+    - Do nothing
 
 **Post-conditions**: n/a
 
@@ -131,9 +131,9 @@ sidebar:
 
 - Player presses the left mouse button
 - System destroys the block at the position the camera is pointing at
-    - **Exception Flow**: The camera does not point at an existing block or the block is more than 5 blocks from the
-      camera away
-        - Do nothing
+  - **Exception Flow**: The camera does not point at an existing block or the block is more than 5 blocks from the
+    camera away
+    - Do nothing
 
 **Post-conditions**: n/a
 
@@ -183,15 +183,15 @@ blocks)<br>
 - Player optionally enters a seed
 - Player presses “Create World” button
 - System generates a new world with a fixed size of 16 × 16 chunks (256 × 256 blocks)
-    - **Exception Flow**: Name input field is empty
-        - System shows an error message
-        - Continue with “Player enters a world name”
-    - **Exception Flow**: There exists already a world with the entered name
-        - System shows an error message
-        - Continue with “Player enters a world name”
-    - **Exception Flow**: Seed input field is empty
-        - A randomly generated number is used as the seed
-        - Continue with “System generates a new world…”
+  - **Exception Flow**: Name input field is empty
+    - System shows an error message
+    - Continue with “Player enters a world name”
+  - **Exception Flow**: There exists already a world with the entered name
+    - System shows an error message
+    - Continue with “Player enters a world name”
+  - **Exception Flow**: Seed input field is empty
+    - A randomly generated number is used as the seed
+    - Continue with “System generates a new world…”
 - System shows the game
 
 **Post-conditions**:
@@ -316,27 +316,27 @@ blocks)<br>
 **Questions / Metrics**:
 
 - How fast is the rendering process?
-    - Average frames per second on the deployment server
-        - Minimum: 20 FPS
-        - Target: 60 FPS
-    - Max frame time (no frames slower than) on the deployment server
-        - Minimum: 60 ms
-        - Target: 20 ms
+  - Average frames per second on the deployment server
+    - Minimum: 20 FPS
+    - Target: 60 FPS
+  - Max frame time (no frames slower than) on the deployment server
+    - Minimum: 60 ms
+    - Target: 20 ms
 - How many invisible blocks are rendered?
-    - Percent of blocks rendered outside the FOV from all rendered blocks
-        - Minimum: 30 %
-        - Target: 15 %
+  - Percent of blocks rendered outside the FOV from all rendered blocks
+    - Minimum: 30 %
+    - Target: 15 %
 - How much memory does the game allocate?
-    - Amount of allocated RAM after 15 minutes of playing
-        - Minimum: 1 GB
-        - Target: 600 MB
-    - Amount of allocated VRAM after 15 minutes of playing
-        - Minimum: 300 MB
-        - Target: 150 MB
+  - Amount of allocated RAM after 15 minutes of playing
+    - Minimum: 1 GB
+    - Target: 600 MB
+  - Amount of allocated VRAM after 15 minutes of playing
+    - Minimum: 300 MB
+    - Target: 150 MB
 - How responsive is the system?
-    - Input latency
-        - Minimum: 40 ms
-        - Target: 20 ms
+  - Input latency
+    - Minimum: 40 ms
+    - Target: 20 ms
 
 ### NFR2: Graphics Quality
 
@@ -347,12 +347,12 @@ blocks)<br>
 **Questions / Metrics**:
 
 - How do players rate the visual quality of distant textures?
-    - Mean Opinion Score from 5 testers comparing mipmapped vs. non-mipmapped clips on a scale from 1 to 5
-        - Minimum: 3.5
-        - Target: 4.0
-    - A/B preference: Preference of testers preferring the version with mipmapping
-        - Minimum: 80 %
-        - Target: 90 %
+  - Mean Opinion Score from 5 testers comparing mipmapped vs. non-mipmapped clips on a scale from 1 to 5
+    - Minimum: 3.5
+    - Target: 4.0
+  - A/B preference: Preference of testers preferring the version with mipmapping
+    - Minimum: 80 %
+    - Target: 90 %
 
 ## Release 3
 
@@ -378,15 +378,15 @@ blocks)<br>
 - Player enters a world name and optionally a seed
 - Player presses “Create World” button
 - System creates a new world and generates an initial area of 16 × 16 chunks (256 × 256 blocks)
-    - **Exception Flow**: Name input field is empty
-        - System shows an error message
-        - Continue with “Player enters a world name”
-    - **Exception Flow**: There exists already a world with the entered name
-        - System shows an error message
-        - Continue with “Player enters a world name”
-    - **Exception Flow**: Seed input field is empty
-        - A randomly generated number is used as the seed
-        - Continue with “System generates a new world”
+  - **Exception Flow**: Name input field is empty
+    - System shows an error message
+    - Continue with “Player enters a world name”
+  - **Exception Flow**: There exists already a world with the entered name
+    - System shows an error message
+    - Continue with “Player enters a world name”
+  - **Exception Flow**: Seed input field is empty
+    - A randomly generated number is used as the seed
+    - Continue with “System generates a new world”
 
 **Post-conditions**:
 
@@ -477,20 +477,20 @@ blocks)<br>
 - System shows signup screen
 - Player enters a player name
 - Player enters a password
-    - **Misuse Flow**: Another person sees the entered password and memorizes it
-        - **Capture Point**: The password is hidden
-        - **Capture Point**: Data is transmitted over an encrypted channel
+  - **Misuse Flow**: Another person sees the entered password and memorizes it
+    - **Capture Point**: The password is hidden
+    - **Capture Point**: Data is transmitted over an encrypted channel
 - Player presses “Create Account” button
 - System creates account
-    - **Exception Flow**: Name input field is empty or too long
-        - System shows an error message
-        - Continue with “Player enters a player name”
-    - **Exception Flow**: A player with the specified name already exists
-        - System show an error message
-        - Continue with “Player enters a player name”
-    - **Exception Flow**: Password input field is empty or too short
-        - System shows an error message
-        - Continue with “Player enters a password”
+  - **Exception Flow**: Name input field is empty or too long
+    - System shows an error message
+    - Continue with “Player enters a player name”
+  - **Exception Flow**: A player with the specified name already exists
+    - System show an error message
+    - Continue with “Player enters a player name”
+  - **Exception Flow**: Password input field is empty or too short
+    - System shows an error message
+    - Continue with “Player enters a password”
 - System shows main menu screen
 
 **Post-conditions**:
@@ -517,14 +517,14 @@ blocks)<br>
 - System shows login screen
 - Player enters their player name
 - Player enters their password
-    - **Misuse Flow**: Another person sees the entered password and memorizes it
-        - **Capture Point**: The password is hidden
-        - **Capture Point**: Data is transmitted over an encrypted channel
+  - **Misuse Flow**: Another person sees the entered password and memorizes it
+    - **Capture Point**: The password is hidden
+    - **Capture Point**: Data is transmitted over an encrypted channel
 - Player presses “Log in” button
 - System authenticates the player
-    - **Exception Flow**: A player with the specified name does not exist or the password was not correct
-        - System shows an error message
-        - Continue with “Player enters their player name”
+  - **Exception Flow**: A player with the specified name does not exist or the password was not correct
+    - System shows an error message
+    - Continue with “Player enters their player name”
 - System shows main menu screen
 
 **Post-conditions**:
@@ -554,12 +554,12 @@ blocks)<br>
 - Player enters a player name
 - Player presses “Change Player Name” button
 - System updates the name of the player
-    - **Exception Flow**: Name input field is empty or too long
-        - System shows an error message
-        - Continue with “Player enters a player name”
-    - **Exception Flow**: A player with the specified name already exists
-        - System show an error message
-        - Continue with “Player enters a player name”
+  - **Exception Flow**: Name input field is empty or too long
+    - System shows an error message
+    - Continue with “Player enters a player name”
+  - **Exception Flow**: A player with the specified name already exists
+    - System show an error message
+    - Continue with “Player enters a player name”
 - System shows main menu screen
 
 **Post-conditions**: n/a
@@ -585,17 +585,17 @@ blocks)<br>
 - System shows change password screen
 - Player enters their old password
 - Player enters a new password
-    - **Misuse Flow**: Another person sees the entered password and memorizes it
-        - **Capture Point**: The password is hidden
-        - **Capture Point**: Data is transmitted over an encrypted channel
+  - **Misuse Flow**: Another person sees the entered password and memorizes it
+    - **Capture Point**: The password is hidden
+    - **Capture Point**: Data is transmitted over an encrypted channel
 - Player presses “Change Password” button
 - System updates the password of the player
-    - **Exception Flow**: Password input field is empty or too short
-        - System shows an error message
-        - Continue with “Player enters a password”
-    - **Exception Flow**: The old password was not correct
-        - System shows an error message
-        - Continue with “Player enters their old password”
+  - **Exception Flow**: Password input field is empty or too short
+    - System shows an error message
+    - Continue with “Player enters a password”
+  - **Exception Flow**: The old password was not correct
+    - System shows an error message
+    - Continue with “Player enters their old password”
 - System shows main menu screen
 
 **Post-conditions**: n/a
@@ -622,9 +622,9 @@ blocks)<br>
 - Player enters their old password
 - Player presses “Yes”
 - System deletes the account of the player
-    - **Exception Flow**: The old password was not correct
-        - System shows an error message
-        - Continue with “Player enters their old password”
+  - **Exception Flow**: The old password was not correct
+    - System shows an error message
+    - Continue with “Player enters their old password”
 - System shows login screen
 
 **Post-conditions**:
@@ -655,12 +655,12 @@ or disables multiplayer<br>
 - (optional) Player manages access list (includes UC21)
 - Player presses “Enable Multiplayer for this World” button
 - System enables multiplayer for the world
-    - **Exception Flow**: Port input is not a valid port
-        - System shows an error message
-        - Continue with step “Player enters a port”
-    - **Exception Flow**: Port is already in use
-        - System shows an error message
-        - Continue with step “Player enters a port”
+  - **Exception Flow**: Port input is not a valid port
+    - System shows an error message
+    - Continue with step “Player enters a port”
+  - **Exception Flow**: Port is already in use
+    - System shows an error message
+    - Continue with step “Player enters a port”
 - System shows the game
 
 **Post-conditions**:
@@ -690,9 +690,9 @@ or disables multiplayer<br>
 - (optional) Player manages access list (includes UC21)
 - Player presses “Apply & Back to Game” button
 - System applies changed options
-    - **Exception Flow**: A Player who was denied access has already joined the world
-        - System removes player from the world
-        - Continue with step “System shows the game”
+  - **Exception Flow**: A Player who was denied access has already joined the world
+    - System removes player from the world
+    - Continue with step “System shows the game”
 - System shows the game
 
 **Post-conditions**: n/a
@@ -718,12 +718,12 @@ adding / removing players from the access list<br>
 - Player presses “Allow to join this world” / “Block from joining this world” button
   (depending on the selected access mode)
 - System adds the player with the specified name to the list
-    - **Exception Flow**: The specified name is the name of the player hosting the multiplayer world
-        - System shows an error message
-        - Continue with step “Player enters a player name to add to the list”
-    - **Exception Flow**: A player with the specified name does not exist
-        - System shows an error message
-        - Continue with step “Player enters a player name to add to the list”
+  - **Exception Flow**: The specified name is the name of the player hosting the multiplayer world
+    - System shows an error message
+    - Continue with step “Player enters a player name to add to the list”
+  - **Exception Flow**: A player with the specified name does not exist
+    - System shows an error message
+    - Continue with step “Player enters a player name to add to the list”
 - Player selects a name from the list
 - System highlights the selected player
 - Player presses “Remove from list” button
@@ -750,12 +750,12 @@ adding / removing players from the access list<br>
 - Player enters the address of the multiplayer world
 - Player presses “Join Multiplayer” button
 - System joins the multiplayer world
-    - **Exception Flow**: The address is invalid or there is no world hosted on the address
-        - System shows an error message
-        - Continue with “Player enters the address of the multiplayer world”
-    - **Exception Flow**: The player's access was denied by the player hosting the multiplayer world
-        - System show an error message
-        - Continue with “Player enters the address of the multiplayer world”
+  - **Exception Flow**: The address is invalid or there is no world hosted on the address
+    - System shows an error message
+    - Continue with “Player enters the address of the multiplayer world”
+  - **Exception Flow**: The player's access was denied by the player hosting the multiplayer world
+    - System show an error message
+    - Continue with “Player enters the address of the multiplayer world”
 - System shows the game
 
 **Post-conditions**:

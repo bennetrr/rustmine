@@ -36,12 +36,12 @@ This project uses [conventional commits](https://www.conventionalcommits.org/en/
   - `feat: ` indicates a new feature
   - `fix: ` indicates a bug fix
   - `chore: `, `test: `, or `docs: ` indicate other changes
-- Example: `feat: Add tree generation`, `chore: Refactor game state`
+- Example: `feat: Add tree generation`, `chore: Refactor game state`, `chore: Format code`
 - Optionally, a scope can be specified (e.g., `fix(ui): Fix misaligned buttons`)
 
 Conventional commits are enforced through git hooks.
 
-## Commands
+### Commands
 
 - `cargo build`: Compiles the project
 - `cargo run`: Runs the project

@@ -16,10 +16,10 @@ body:
 bodyType: application/json
 description: ''
 headers:
-- enabled: true
-  name: Content-Type
-  value: application/json
-  id: bjS3G5iSXd
+  - enabled: true
+    name: Content-Type
+    value: application/json
+    id: bjS3G5iSXd
 method: POST
 name: Create
 sortPriority: 2333.3333333333335

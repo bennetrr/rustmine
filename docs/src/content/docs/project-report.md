@@ -34,11 +34,11 @@ Keybindings in the game:
 - Right mouse button: Place block
 - G: Toggle flight mode
 - ESC:
-    - Main Menu: Exit the game
-    - Pause Menu: Resume the game
-    - In-Game: Open the pause menu
-    - Singleplayer and Multiplayer: Back to the Main Menu
-    - World Creation Menu: Back to the Singleplayer Menu
+  - Main Menu: Exit the game
+  - Pause Menu: Resume the game
+  - In-Game: Open the pause menu
+  - Singleplayer and Multiplayer: Back to the Main Menu
+  - World Creation Menu: Back to the Singleplayer Menu
 
 When creating a new world, the creation screen lets you set a world name and a seed,
 which determines the procedurally generated terrain.
