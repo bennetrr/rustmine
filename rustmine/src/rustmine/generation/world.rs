@@ -176,7 +176,7 @@ impl World {
         &mut self,
         player_position: PlayerPos,
         render_distance_radius: i32,
-        chunk_groups: &HashMap<ChunkPos, Vec<ChunkBlockGroup>>,
+        chunk_groups: &HashMap<ChunkPos, HashMap<BlockType, ChunkBlockGroup>>,
     ) {
         let chunk_pos = Self::chunk_pos_from_block_pos(BlockPos::new(
             player_position.x as i32,
