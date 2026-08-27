@@ -9,8 +9,8 @@ use crate::engine::rendering::{camera, model, resources, texture};
 use crate::engine::ui::ui_factory::{UiComponents, load_fonts};
 use crate::rustmine::entities::player::Player;
 use crate::rustmine::generation::chunk::{Chunk, generate_mesh};
-use crate::rustmine::generation::types::PlayerPos;
 use crate::rustmine::generation::types::{BlockPos, ChunkPos};
+use crate::rustmine::generation::types::{BlockType, PlayerPos};
 use crate::rustmine::generation::world::World;
 use crate::rustmine::ui::ui_chat::ChatUI;
 use cgmath::{InnerSpace, Vector2, Vector3};
@@ -32,7 +32,7 @@ pub struct GameState {
     queue: wgpu::Queue,
     config: wgpu::SurfaceConfiguration,
 
-    chunk_groups: HashMap<Vector2<i32>, Vec<ChunkBlockGroup>>,
+    chunk_groups: HashMap<Vector2<i32>, HashMap<BlockType, ChunkBlockGroup>>,
     world: World,
     world_name: String,
     is_paused: bool,
@@ -136,7 +136,8 @@ impl GameState {
             .unwrap_or_else(|| World::new(&world_name));
 
         log::debug!("Load models");
-        let mut chunk_groups: HashMap<Vector2<i32>, Vec<ChunkBlockGroup>> = HashMap::new();
+        let mut chunk_groups: HashMap<Vector2<i32>, HashMap<BlockType, ChunkBlockGroup>> =
+            HashMap::new();
 
         let mut models = HashMap::new();
 
@@ -386,113 +387,146 @@ impl GameState {
             let mesh = generate_mesh(&chunk.blocks, *chunk_pos, [None, None, None, None]);
 
             // Chunk Groups Insertion
-            chunk_groups.insert(
-                *chunk_pos,
-                vec![
-                    ChunkBlockGroup::new(
-                        models.get("grass_model").unwrap().clone(),
-                        mesh.grass,
-                        &device,
-                        &format!(
-                            "Chunk {:?}{:?} Grass Instance Buffer",
-                            chunk.position.x, chunk.position.y
-                        ),
+            let mut chunk_block_group_hashmap = HashMap::new();
+
+            // Dirt and Grass
+            chunk_block_group_hashmap.insert(
+                BlockType::Grass,
+                ChunkBlockGroup::new(
+                    models.get("grass_model").unwrap().clone(),
+                    mesh.grass,
+                    &device,
+                    &format!(
+                        "Chunk {:?}{:?} Grass Instance Buffer",
+                        chunk.position.x, chunk.position.y
                     ),
-                    ChunkBlockGroup::new(
-                        models.get("dirt_model").unwrap().clone(),
-                        mesh.dirt,
-                        &device,
-                        &format!(
-                            "Chunk {:?}{:?} Dirt Instance Buffer",
-                            chunk.position.x, chunk.position.y
-                        ),
-                    ),
-                    ChunkBlockGroup::new(
-                        models.get("cobblestone_model").unwrap().clone(),
-                        mesh.cobblestone,
-                        &device,
-                        &format!(
-                            "Chunk {:?}{:?} Cobblestone Instance Buffer",
-                            chunk.position.x, chunk.position.y
-                        ),
-                    ),
-                    ChunkBlockGroup::new(
-                        models.get("stone_model").unwrap().clone(),
-                        mesh.stone,
-                        &device,
-                        &format!(
-                            "Chunk {:?}{:?} Stone Instance Buffer",
-                            chunk.position.x, chunk.position.y
-                        ),
-                    ),
-                    // Wood
-                    ChunkBlockGroup::new(
-                        models.get("oak_model").unwrap().clone(),
-                        mesh.oak,
-                        &device,
-                        &format!(
-                            "Chunk {:?}{:?} Oak Instance Buffer",
-                            chunk.position.x, chunk.position.y
-                        ),
-                    ),
-                    ChunkBlockGroup::new(
-                        models.get("spruce_model").unwrap().clone(),
-                        mesh.spruce,
-                        &device,
-                        &format!(
-                            "Chunk {:?}{:?} Spruce Instance Buffer",
-                            chunk.position.x, chunk.position.y
-                        ),
-                    ),
-                    ChunkBlockGroup::new(
-                        models.get("birch_model").unwrap().clone(),
-                        mesh.birch,
-                        &device,
-                        &format!(
-                            "Chunk {:?}{:?} Birch Instance Buffer",
-                            chunk.position.x, chunk.position.y
-                        ),
-                    ),
-                    // Leaves
-                    ChunkBlockGroup::new(
-                        models.get("leaves_oak_model").unwrap().clone(),
-                        mesh.leaves_oak,
-                        &device,
-                        &format!(
-                            "Chunk {:?}{:?} Leaves Oak Instance Buffer",
-                            chunk.position.x, chunk.position.y
-                        ),
-                    ),
-                    ChunkBlockGroup::new(
-                        models.get("leaves_birch_model").unwrap().clone(),
-                        mesh.leaves_birch,
-                        &device,
-                        &format!(
-                            "Chunk {:?}{:?} Leaves Birch Instance Buffer",
-                            chunk.position.x, chunk.position.y
-                        ),
-                    ),
-                    ChunkBlockGroup::new(
-                        models.get("leaves_spruce_model").unwrap().clone(),
-                        mesh.leaves_spruce,
-                        &device,
-                        &format!(
-                            "Chunk {:?}{:?} Leaves Spruce Instance Buffer",
-                            chunk.position.x, chunk.position.y
-                        ),
-                    ),
-                    // Other Blocks
-                    ChunkBlockGroup::new(
-                        models.get("tall_grass_model").unwrap().clone(),
-                        mesh.tall_grass,
-                        &device,
-                        &format!(
-                            "Chunk {:?}{:?} Tall Grass Instance Buffer",
-                            chunk.position.x, chunk.position.y
-                        ),
-                    ),
-                ],
+                ),
             );
+            chunk_block_group_hashmap.insert(
+                BlockType::Dirt,
+                ChunkBlockGroup::new(
+                    models.get("dirt_model").unwrap().clone(),
+                    mesh.dirt,
+                    &device,
+                    &format!(
+                        "Chunk {:?}{:?} Dirt Instance Buffer",
+                        chunk.position.x, chunk.position.y
+                    ),
+                ),
+            );
+            chunk_block_group_hashmap.insert(
+                BlockType::TallGrass,
+                ChunkBlockGroup::new(
+                    models.get("tall_grass_model").unwrap().clone(),
+                    mesh.tall_grass,
+                    &device,
+                    &format!(
+                        "Chunk {:?}{:?} Tall Grass Instance Buffer",
+                        chunk.position.x, chunk.position.y
+                    ),
+                ),
+            );
+            // Stone
+            chunk_block_group_hashmap.insert(
+                BlockType::Cobblestone,
+                ChunkBlockGroup::new(
+                    models.get("cobblestone_model").unwrap().clone(),
+                    mesh.cobblestone,
+                    &device,
+                    &format!(
+                        "Chunk {:?}{:?} Cobblestone Instance Buffer",
+                        chunk.position.x, chunk.position.y
+                    ),
+                ),
+            );
+            chunk_block_group_hashmap.insert(
+                BlockType::Stone,
+                ChunkBlockGroup::new(
+                    models.get("stone_model").unwrap().clone(),
+                    mesh.stone,
+                    &device,
+                    &format!(
+                        "Chunk {:?}{:?} Stone Instance Buffer",
+                        chunk.position.x, chunk.position.y
+                    ),
+                ),
+            );
+            // Wood
+            chunk_block_group_hashmap.insert(
+                BlockType::Oak,
+                ChunkBlockGroup::new(
+                    models.get("oak_model").unwrap().clone(),
+                    mesh.oak,
+                    &device,
+                    &format!(
+                        "Chunk {:?}{:?} Oak Instance Buffer",
+                        chunk.position.x, chunk.position.y
+                    ),
+                ),
+            );
+            chunk_block_group_hashmap.insert(
+                BlockType::Spruce,
+                ChunkBlockGroup::new(
+                    models.get("spruce_model").unwrap().clone(),
+                    mesh.spruce,
+                    &device,
+                    &format!(
+                        "Chunk {:?}{:?} Spruce Instance Buffer",
+                        chunk.position.x, chunk.position.y
+                    ),
+                ),
+            );
+            chunk_block_group_hashmap.insert(
+                BlockType::Birch,
+                ChunkBlockGroup::new(
+                    models.get("birch_model").unwrap().clone(),
+                    mesh.birch,
+                    &device,
+                    &format!(
+                        "Chunk {:?}{:?} Birch Instance Buffer",
+                        chunk.position.x, chunk.position.y
+                    ),
+                ),
+            );
+            // Leaves
+            chunk_block_group_hashmap.insert(
+                BlockType::LeavesOak,
+                ChunkBlockGroup::new(
+                    models.get("leaves_oak_model").unwrap().clone(),
+                    mesh.leaves_oak,
+                    &device,
+                    &format!(
+                        "Chunk {:?}{:?} Leaves Oak Instance Buffer",
+                        chunk.position.x, chunk.position.y
+                    ),
+                ),
+            );
+            chunk_block_group_hashmap.insert(
+                BlockType::LeavesSpruce,
+                ChunkBlockGroup::new(
+                    models.get("leaves_spruce_model").unwrap().clone(),
+                    mesh.leaves_spruce,
+                    &device,
+                    &format!(
+                        "Chunk {:?}{:?} Leaves Spruce Instance Buffer",
+                        chunk.position.x, chunk.position.y
+                    ),
+                ),
+            );
+            chunk_block_group_hashmap.insert(
+                BlockType::LeavesBirch,
+                ChunkBlockGroup::new(
+                    models.get("leaves_birch_model").unwrap().clone(),
+                    mesh.leaves_birch,
+                    &device,
+                    &format!(
+                        "Chunk {:?}{:?} Leaves Birch Instance Buffer",
+                        chunk.position.x, chunk.position.y
+                    ),
+                ),
+            );
+
+            chunk_groups.insert(*chunk_pos, chunk_block_group_hashmap);
         }
 
         // Fog uniform
@@ -712,25 +746,81 @@ impl GameState {
         );
 
         // Add instances to the chunk_groups
-        self.chunk_groups.get_mut(&chunk_pos).unwrap()[0].instances = mesh.grass;
-        self.chunk_groups.get_mut(&chunk_pos).unwrap()[1].instances = mesh.dirt;
-        self.chunk_groups.get_mut(&chunk_pos).unwrap()[2].instances = mesh.cobblestone;
-        self.chunk_groups.get_mut(&chunk_pos).unwrap()[3].instances = mesh.stone;
+        // Grass
+        self.chunk_groups
+            .get_mut(&chunk_pos)
+            .unwrap()
+            .get_mut(&BlockType::Grass)
+            .unwrap()
+            .instances = mesh.grass;
+        self.chunk_groups
+            .get_mut(&chunk_pos)
+            .unwrap()
+            .get_mut(&BlockType::Dirt)
+            .unwrap()
+            .instances = mesh.dirt;
+        self.chunk_groups
+            .get_mut(&chunk_pos)
+            .unwrap()
+            .get_mut(&BlockType::TallGrass)
+            .unwrap()
+            .instances = mesh.tall_grass;
+
+        // Stone
+        self.chunk_groups
+            .get_mut(&chunk_pos)
+            .unwrap()
+            .get_mut(&BlockType::Cobblestone)
+            .unwrap()
+            .instances = mesh.cobblestone;
+        self.chunk_groups
+            .get_mut(&chunk_pos)
+            .unwrap()
+            .get_mut(&BlockType::Stone)
+            .unwrap()
+            .instances = mesh.stone;
 
         // Wood
-        self.chunk_groups.get_mut(&chunk_pos).unwrap()[4].instances = mesh.oak;
-        self.chunk_groups.get_mut(&chunk_pos).unwrap()[5].instances = mesh.spruce;
-        self.chunk_groups.get_mut(&chunk_pos).unwrap()[6].instances = mesh.birch;
+        self.chunk_groups
+            .get_mut(&chunk_pos)
+            .unwrap()
+            .get_mut(&BlockType::Oak)
+            .unwrap()
+            .instances = mesh.oak;
+        self.chunk_groups
+            .get_mut(&chunk_pos)
+            .unwrap()
+            .get_mut(&BlockType::Spruce)
+            .unwrap()
+            .instances = mesh.spruce;
+        self.chunk_groups
+            .get_mut(&chunk_pos)
+            .unwrap()
+            .get_mut(&BlockType::Birch)
+            .unwrap()
+            .instances = mesh.birch;
 
         // Leaves
-        self.chunk_groups.get_mut(&chunk_pos).unwrap()[7].instances = mesh.leaves_oak;
-        self.chunk_groups.get_mut(&chunk_pos).unwrap()[8].instances = mesh.leaves_birch;
-        self.chunk_groups.get_mut(&chunk_pos).unwrap()[9].instances = mesh.leaves_spruce;
+        self.chunk_groups
+            .get_mut(&chunk_pos)
+            .unwrap()
+            .get_mut(&BlockType::LeavesOak)
+            .unwrap()
+            .instances = mesh.leaves_oak;
+        self.chunk_groups
+            .get_mut(&chunk_pos)
+            .unwrap()
+            .get_mut(&BlockType::LeavesBirch)
+            .unwrap()
+            .instances = mesh.leaves_birch;
+        self.chunk_groups
+            .get_mut(&chunk_pos)
+            .unwrap()
+            .get_mut(&BlockType::LeavesSpruce)
+            .unwrap()
+            .instances = mesh.leaves_spruce;
 
-        // Other Blocks
-        self.chunk_groups.get_mut(&chunk_pos).unwrap()[10].instances = mesh.tall_grass;
-
-        for group in self.chunk_groups.get_mut(&chunk_pos).unwrap() {
+        for group in self.chunk_groups.get_mut(&chunk_pos).unwrap().values_mut() {
             group.rewrite_buffer(&self.device, &self.queue);
         }
 
@@ -963,80 +1053,114 @@ impl TState for GameState {
 
         // Procedural ChunkBlockGroups Insertion
         for mesh in self.world.collect_generated_chunks() {
-            self.chunk_groups.insert(
-                mesh.pos,
-                vec![
-                    ChunkBlockGroup::new(
-                        self.models.get("grass_model").unwrap().clone(),
-                        mesh.grass,
-                        &self.device,
-                        &format!("Chunk {:?} Grass", mesh.pos),
-                    ),
-                    ChunkBlockGroup::new(
-                        self.models.get("dirt_model").unwrap().clone(),
-                        mesh.dirt,
-                        &self.device,
-                        &format!("Chunk {:?} Dirt", mesh.pos),
-                    ),
-                    ChunkBlockGroup::new(
-                        self.models.get("cobblestone_model").unwrap().clone(),
-                        mesh.cobblestone,
-                        &self.device,
-                        &format!("Chunk {:?} Cobblestone", mesh.pos),
-                    ),
-                    ChunkBlockGroup::new(
-                        self.models.get("stone_model").unwrap().clone(),
-                        mesh.stone,
-                        &self.device,
-                        &format!("Chunk {:?} Stone", mesh.pos),
-                    ),
-                    // Wood
-                    ChunkBlockGroup::new(
-                        self.models.get("oak_model").unwrap().clone(),
-                        mesh.oak,
-                        &self.device,
-                        &format!("Chunk {:?} Oak", mesh.pos),
-                    ),
-                    ChunkBlockGroup::new(
-                        self.models.get("spruce_model").unwrap().clone(),
-                        mesh.spruce,
-                        &self.device,
-                        &format!("Chunk {:?} Spruce", mesh.pos),
-                    ),
-                    ChunkBlockGroup::new(
-                        self.models.get("birch_model").unwrap().clone(),
-                        mesh.birch,
-                        &self.device,
-                        &format!("Chunk {:?} Birch", mesh.pos),
-                    ),
-                    // Leaves
-                    ChunkBlockGroup::new(
-                        self.models.get("leaves_oak_model").unwrap().clone(),
-                        mesh.leaves_oak,
-                        &self.device,
-                        &format!("Chunk {:?} Leaves Oak", mesh.pos),
-                    ),
-                    ChunkBlockGroup::new(
-                        self.models.get("leaves_birch_model").unwrap().clone(),
-                        mesh.leaves_birch,
-                        &self.device,
-                        &format!("Chunk {:?} Leaves Birch", mesh.pos),
-                    ),
-                    ChunkBlockGroup::new(
-                        self.models.get("leaves_spruce_model").unwrap().clone(),
-                        mesh.leaves_spruce,
-                        &self.device,
-                        &format!("Chunk {:?} Leaves Spruce", mesh.pos),
-                    ),
-                    // Other Blocks
-                    ChunkBlockGroup::new(
-                        self.models.get("tall_grass_model").unwrap().clone(),
-                        mesh.tall_grass,
-                        &self.device,
-                        &format!("Chunk {:?} Tall Grass", mesh.pos),
-                    ),
-                ],
+            let mut chunk_block_group_hashmap = HashMap::new();
+
+            // Grass
+            chunk_block_group_hashmap.insert(
+                BlockType::Grass,
+                ChunkBlockGroup::new(
+                    self.models.get("grass_model").unwrap().clone(),
+                    mesh.grass,
+                    &self.device,
+                    &format!("Chunk {:?} Grass", mesh.pos),
+                ),
             );
+            chunk_block_group_hashmap.insert(
+                BlockType::Dirt,
+                ChunkBlockGroup::new(
+                    self.models.get("dirt_model").unwrap().clone(),
+                    mesh.dirt,
+                    &self.device,
+                    &format!("Chunk {:?} Dirt", mesh.pos),
+                ),
+            );
+            chunk_block_group_hashmap.insert(
+                BlockType::TallGrass,
+                ChunkBlockGroup::new(
+                    self.models.get("tall_grass_model").unwrap().clone(),
+                    mesh.tall_grass,
+                    &self.device,
+                    &format!("Chunk {:?} Tall Grass", mesh.pos),
+                ),
+            );
+            // Stone
+            chunk_block_group_hashmap.insert(
+                BlockType::Cobblestone,
+                ChunkBlockGroup::new(
+                    self.models.get("cobblestone_model").unwrap().clone(),
+                    mesh.cobblestone,
+                    &self.device,
+                    &format!("Chunk {:?} Cobblestone", mesh.pos),
+                ),
+            );
+            chunk_block_group_hashmap.insert(
+                BlockType::Stone,
+                ChunkBlockGroup::new(
+                    self.models.get("stone_model").unwrap().clone(),
+                    mesh.stone,
+                    &self.device,
+                    &format!("Chunk {:?} Stone", mesh.pos),
+                ),
+            );
+            // Wood
+            chunk_block_group_hashmap.insert(
+                BlockType::Oak,
+                ChunkBlockGroup::new(
+                    self.models.get("oak_model").unwrap().clone(),
+                    mesh.oak,
+                    &self.device,
+                    &format!("Chunk {:?} Oak", mesh.pos),
+                ),
+            );
+            chunk_block_group_hashmap.insert(
+                BlockType::Spruce,
+                ChunkBlockGroup::new(
+                    self.models.get("spruce_model").unwrap().clone(),
+                    mesh.spruce,
+                    &self.device,
+                    &format!("Chunk {:?} Spruce", mesh.pos),
+                ),
+            );
+            chunk_block_group_hashmap.insert(
+                BlockType::Birch,
+                ChunkBlockGroup::new(
+                    self.models.get("birch_model").unwrap().clone(),
+                    mesh.birch,
+                    &self.device,
+                    &format!("Chunk {:?} Birch", mesh.pos),
+                ),
+            );
+            // Leaves
+            chunk_block_group_hashmap.insert(
+                BlockType::LeavesOak,
+                ChunkBlockGroup::new(
+                    self.models.get("leaves_oak_model").unwrap().clone(),
+                    mesh.leaves_oak,
+                    &self.device,
+                    &format!("Chunk {:?} Leaves Oak", mesh.pos),
+                ),
+            );
+            chunk_block_group_hashmap.insert(
+                BlockType::LeavesSpruce,
+                ChunkBlockGroup::new(
+                    self.models.get("leaves_spruce_model").unwrap().clone(),
+                    mesh.leaves_spruce,
+                    &self.device,
+                    &format!("Chunk {:?} Leaves Spruce", mesh.pos),
+                ),
+            );
+            chunk_block_group_hashmap.insert(
+                BlockType::LeavesBirch,
+                ChunkBlockGroup::new(
+                    self.models.get("leaves_birch_model").unwrap().clone(),
+                    mesh.leaves_birch,
+                    &self.device,
+                    &format!("Chunk {:?} Leaves Birch", mesh.pos),
+                ),
+            );
+
+            self.chunk_groups
+                .insert(mesh.pos, chunk_block_group_hashmap);
         }
         {
             let t = ((-self.player.camera.eye.y - 10.0) / 10.0).clamp(0.0, 1.0) as f64;
@@ -1083,7 +1207,10 @@ impl TState for GameState {
             // Pass 1 - opaque blocks
             render_pass.set_pipeline(&self.render_pipeline);
             for (_, groups) in &visible_chunks {
-                for group in &groups[..groups.len() - 1] {
+                for (block_type, group) in *groups {
+                    if *block_type == BlockType::TallGrass {
+                        continue;
+                    }
                     if group.instances.is_empty() {
                         continue;
                     }
@@ -1100,7 +1227,7 @@ impl TState for GameState {
             // Pass 2 - foliage
             render_pass.set_pipeline(&self.foliage_render_pipeline);
             for (_, groups) in &visible_chunks {
-                let group = &groups[groups.len() - 1];
+                let group = &groups.get(&BlockType::TallGrass).unwrap();
                 if group.instances.is_empty() {
                     continue;
                 }
