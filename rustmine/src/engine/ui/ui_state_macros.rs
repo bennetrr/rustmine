@@ -161,11 +161,11 @@ macro_rules! impl_new {
                 vertex: wgpu::VertexState {
                     module: &shader,
                     entry_point: Some("vs_main"),
-                    buffers: &[wgpu::VertexBufferLayout {
+                    buffers: &[Some(wgpu::VertexBufferLayout {
                         array_stride: 4 * 4, // 4 floats
                         step_mode: wgpu::VertexStepMode::Vertex,
                         attributes: &wgpu::vertex_attr_array![0 => Float32x2, 1 => Float32x2],
-                    }],
+                    })],
                     compilation_options: Default::default(),
                 },
                 fragment: Some(wgpu::FragmentState {
@@ -362,7 +362,7 @@ macro_rules! impl_render {
             for (id, image_delta) in &full_output.textures_delta.set {
                 $self
                     .egui_renderer
-                    .update_texture(&$self.device, &$self.queue, *id, image_delta);
+                    .update_texture(&$self.device, &$self.queue, *id, &image_delta[0]);
             }
 
             let mut update_encoder =
@@ -427,7 +427,7 @@ macro_rules! impl_render {
             }
 
             $self.queue.submit(std::iter::once(encoder.finish()));
-            output.present();
+            $self.queue.present(output);
 
             Ok(())
         }

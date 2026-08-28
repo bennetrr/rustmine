@@ -86,6 +86,7 @@ mod tests {
                 power_preference: wgpu::PowerPreference::LowPower,
                 force_fallback_adapter: true,
                 compatible_surface: None,
+                apply_limit_buckets: false,
             })
             .await
             .ok()?;
@@ -132,6 +133,7 @@ mod tests {
             let config = wgpu::SurfaceConfiguration {
                 usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
                 format: wgpu::TextureFormat::Rgba8UnormSrgb,
+                color_space: Default::default(),
                 width: 800,
                 height: 600,
                 present_mode: wgpu::PresentMode::Fifo,
@@ -191,6 +193,7 @@ mod tests {
             let config = wgpu::SurfaceConfiguration {
                 usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
                 format: wgpu::TextureFormat::Rgba8UnormSrgb,
+                color_space: Default::default(),
                 width: 800,
                 height: 600,
                 present_mode: wgpu::PresentMode::Fifo,
@@ -245,6 +248,7 @@ mod tests {
             let config = wgpu::SurfaceConfiguration {
                 usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
                 format: wgpu::TextureFormat::Rgba8UnormSrgb,
+                color_space: Default::default(),
                 width: 800,
                 height: 600,
                 present_mode: wgpu::PresentMode::Fifo,

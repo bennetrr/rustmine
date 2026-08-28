@@ -1,4 +1,5 @@
-use std::io::{BufReader, Cursor};
+use std::io::Cursor;
+use tokio::io::BufReader;
 
 use crate::engine::rendering::{model, texture};
 use wgpu::util::DeviceExt;
@@ -88,7 +89,7 @@ pub async fn load_model(
     let obj_cursor = Cursor::new(obj_text);
     let mut obj_reader = BufReader::new(obj_cursor);
 
-    let (models, obj_materials) = tobj::load_obj_buf_async(
+    let (models, obj_materials) = tobj::tokio::load_obj_buf(
         &mut obj_reader,
         &tobj::LoadOptions {
             triangulate: true,
@@ -96,15 +97,15 @@ pub async fn load_model(
             ..Default::default()
         },
         |p| async move {
-            let mat_text = load_string(&p).await.unwrap();
-            tobj::load_mtl_buf(&mut BufReader::new(Cursor::new(mat_text)))
+            let mat_text = load_string(p.to_str().unwrap()).await.unwrap();
+            tobj::tokio::load_mtl_buf(&mut BufReader::new(Cursor::new(mat_text))).await
         },
     )
     .await?;
 
     let mut materials = Vec::new();
     for m in obj_materials? {
-        let diffuse_texture = load_texture(&m.diffuse_texture, device, queue).await?;
+        let diffuse_texture = load_texture(&m.diffuse_texture.unwrap(), device, queue).await?;
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout,
             entries: &[
