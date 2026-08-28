@@ -39,11 +39,10 @@ pub(crate) enum ChunkStatus {
 /// In `chunk.rs`: In `generate_mesh()` add vector of instances, push the instances in the match statement, return the instances.<br>
 /// In `game_state.rs`: Add a block model in the "Models Insertion" code block.
 /// Add a chunk block group in the "Chunk Groups Insertion" code block.
-/// Add instances in the "Add instances to the chunk_groups" code block. Index must match the index
-/// of the vector in the "Chunk Groups Insertion" code block!<br>
+/// Add instances in the "Add instances to the chunk_groups" code block.<br>
 /// In `render()` of `game_state.rs`: Add ChunkBlockGroup
 /// in the "Procedural ChunkBlockGroups Insertion" code block.
-#[derive(Clone, Copy, PartialEq, Eq, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Serialize, Deserialize, Hash)]
 pub(crate) enum BlockType {
     // Natural Blocks
     Grass,
