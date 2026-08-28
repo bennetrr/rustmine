@@ -87,6 +87,12 @@ impl Player {
         if let Some((pos, _)) = self.raycast_block(world) {
             log::info!("Destroying block at {:?}", pos);
             world.remove_block(pos);
+
+            if let Some(upper_block) = world.get_block(Vector3::new(pos.x, pos.y + 1, pos.z))
+                && *upper_block == BlockType::TallGrass
+            {
+                world.remove_block(Vector3::new(pos.x, pos.y + 1, pos.z));
+            }
         }
     }
 

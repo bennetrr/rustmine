@@ -1012,12 +1012,6 @@ impl TState for GameState {
             wgpu::CurrentSurfaceTexture::Lost => anyhow::bail!("Lost device"),
         };
 
-        // The compositor may resize the surface (e.g. maximizing on X11) before a
-        // `Resized` event reaches us. In that case the acquired color texture is already
-        // at the new size while `config`/`depth_texture` still hold the old one, which
-        // makes the render pass fail validation (differing attachment sizes). Resync the
-        // config-derived state to the actual texture before rendering. The surface itself
-        // is not reconfigured here since `output` is already valid at its real size.
         let (tex_width, tex_height) = (output.texture.width(), output.texture.height());
         if tex_width != self.config.width || tex_height != self.config.height {
             self.config.width = tex_width;
