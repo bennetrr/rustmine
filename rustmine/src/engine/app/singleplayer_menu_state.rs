@@ -37,7 +37,7 @@ pub struct SingleplayerState {
     egui_winit: egui_winit::State,
 
     // World selection
-    worlds: Vec<Save>,
+    worlds: Vec<(Save, WorldMetaData)>,
     selected_world_id: Option<String>,
 }
 
@@ -45,7 +45,13 @@ impl SingleplayerState {
     impl_new! {
         background: "../../assets/images/menu_background.png",
         fields: {
-            worlds: Save::list(),
+            worlds: Save::list().iter()
+                            .map(|world| {
+                                let meta = World::load_world_metadata(&world.name)
+                                    .unwrap_or(WorldMetaData::new(SystemTime::UNIX_EPOCH));
+                                (world.clone(), meta)
+                            })
+                            .collect(),
             selected_world_id: None,
         },
     }
@@ -73,19 +79,8 @@ impl TState for SingleplayerState {
                             uic.gap_y(ui, uic.pt(10));
                             let mut world_selected = false;
 
-                            let mut worlds_with_meta: Vec<(&_, WorldMetaData)> = self
-                            .worlds
-                            .iter()
-                            .map(|world| {
-                                let meta = World::load_world_metadata(&world.name)
-                                    .unwrap_or(WorldMetaData::new(SystemTime::UNIX_EPOCH));
-                                (world, meta)
-                            })
-                            .collect();
 
-                            worlds_with_meta.sort_by_key(|b| std::cmp::Reverse(b.1.last_played));
-
-                            for (world, metadata) in worlds_with_meta.iter() {
+                            for (world, metadata) in self.worlds.iter() {
                                 let is_selected =
                                     self.selected_world_id == Some(world.name.to_string());
 
@@ -195,7 +190,7 @@ impl TState for SingleplayerState {
                                 match Save::get_by_name(&name.clone()).delete() {
                                     Ok(()) => {
                                     log::info!("[Singleplayer Menu State] Deleted world '{}'", name);
-                                    self.worlds.retain(|w| &w.name != name);
+                                    self.worlds.retain(|w| &w.0.name != name);
                                     self.selected_world_id = None;
                                 },
                                     Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
