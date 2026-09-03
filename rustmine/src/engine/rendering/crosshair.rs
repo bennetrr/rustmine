@@ -98,7 +98,7 @@ impl Crosshair {
             vertex: wgpu::VertexState {
                 module: &shader,
                 entry_point: Some("vs_main"),
-                buffers: &[CrosshairVertex::desc()],
+                buffers: &[Some(CrosshairVertex::desc())],
                 compilation_options: Default::default(),
             },
             fragment: Some(wgpu::FragmentState {

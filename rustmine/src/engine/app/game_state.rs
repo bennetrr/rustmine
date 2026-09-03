@@ -590,7 +590,7 @@ impl GameState {
                 &render_pipeline_layout,
                 config.format,
                 Some(texture::Texture::DEPTH_FORMAT),
-                &[model::ModelVertex::desc(), InstanceRaw::desc()],
+                &[Some(model::ModelVertex::desc()), Some(InstanceRaw::desc())],
                 shader,
                 Some(wgpu::Face::Back),
             )
@@ -615,7 +615,7 @@ impl GameState {
                 &layout,
                 config.format,
                 Some(texture::Texture::DEPTH_FORMAT),
-                &[model::ModelVertex::desc()],
+                &[Some(model::ModelVertex::desc())],
                 shader,
                 Some(wgpu::Face::Back),
             )
@@ -632,7 +632,7 @@ impl GameState {
                 &render_pipeline_layout,
                 config.format,
                 Some(texture::Texture::DEPTH_FORMAT),
-                &[model::ModelVertex::desc(), InstanceRaw::desc()],
+                &[Some(model::ModelVertex::desc()), Some(InstanceRaw::desc())],
                 shader,
                 None,
             )
@@ -1012,12 +1012,6 @@ impl TState for GameState {
             wgpu::CurrentSurfaceTexture::Lost => anyhow::bail!("Lost device"),
         };
 
-        // The compositor may resize the surface (e.g. maximizing on X11) before a
-        // `Resized` event reaches us. In that case the acquired color texture is already
-        // at the new size while `config`/`depth_texture` still hold the old one, which
-        // makes the render pass fail validation (differing attachment sizes). Resync the
-        // config-derived state to the actual texture before rendering. The surface itself
-        // is not reconfigured here since `output` is already valid at its real size.
         let (tex_width, tex_height) = (output.texture.width(), output.texture.height());
         if tex_width != self.config.width || tex_height != self.config.height {
             self.config.width = tex_width;
@@ -1343,7 +1337,7 @@ impl TState for GameState {
 
             for (id, image_delta) in &full_output.textures_delta.set {
                 self.egui_renderer
-                    .update_texture(&self.device, &self.queue, *id, image_delta);
+                    .update_texture(&self.device, &self.queue, *id, &image_delta[0]);
             }
 
             self.egui_renderer.update_buffers(
@@ -1464,7 +1458,7 @@ impl TState for GameState {
 
             for (id, image_delta) in &full_output.textures_delta.set {
                 self.egui_renderer
-                    .update_texture(&self.device, &self.queue, *id, image_delta);
+                    .update_texture(&self.device, &self.queue, *id, &image_delta[0]);
             }
 
             self.egui_renderer.update_buffers(
@@ -1506,7 +1500,7 @@ impl TState for GameState {
         }
 
         self.queue.submit(iter::once(encoder.finish()));
-        output.present();
+        self.queue.present(output);
 
         self.player.camera_controller.is_generated = true;
 
@@ -1521,7 +1515,7 @@ fn create_render_pipeline(
     layout: &wgpu::PipelineLayout,
     color_format: wgpu::TextureFormat,
     depth_format: Option<wgpu::TextureFormat>,
-    vertex_layouts: &[wgpu::VertexBufferLayout],
+    vertex_layouts: &[Option<wgpu::VertexBufferLayout>],
     shader: wgpu::ShaderModuleDescriptor,
     cull_mode: Option<wgpu::Face>,
 ) -> wgpu::RenderPipeline {
