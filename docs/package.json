@@ -10,12 +10,12 @@
   "dependencies": {
     "@astrojs/starlight": "^0.41.6",
     "@mermaid-js/layout-elk": "^0.2.2",
-    "astro": "^7.1.6",
+    "astro": "^7.2.8",
     "astro-mermaid": "^2.1.0",
     "mermaid": "^11.16.1",
     "node-addon-api": "^8.9.1",
     "node-gyp": "^13.0.1",
-    "sharp": "^0.35.3"
+    "sharp": "^0.35.4"
   },
   "engines": {
     "node": ">=26"
